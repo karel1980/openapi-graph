@@ -18,22 +18,17 @@ export class AppComponent implements OnInit {
   private height = 600;
   private margin = 10;
 
-  private simulation!: Simulation<any, any>;
-  private data = [{}, {}, {}, {}, {}];
-
   ngOnInit(): void {
     var graph = ForceGraph("#figure", MISERABLES,
       {
         nodeId: (d: any) => d.id,
         nodeGroup: (d: any) => d.group,
-        nodeTitle: (d: any) => `${d.id}\n${d.group}`,
+        nodeTitle: (d: any) => `${d.id}`,
         linkStrokeWidth: (l: any) => Math.sqrt(l.value),
         width: this.width,
         height: this.height,
         //invalidation // a promise to stop the simulation when the cell is re-run
       });
-
-
   }
 
 }

@@ -80,14 +80,22 @@ export function ForceGraph(figure: any, {
 
   const node = svg.append("g")
     .attr("fill", nodeFill)
+    .selectAll("g")
+    .data(nodes)
+    .join("g")
+    .call(drag(simulation));
+
+  var handles = node.append("circle")
     .attr("stroke", nodeStroke)
     .attr("stroke-opacity", nodeStrokeOpacity)
     .attr("stroke-width", nodeStrokeWidth)
-    .selectAll("circle")
-    .data(nodes)
-    .join("circle")
     .attr("r", nodeRadius)
-    .call(drag(simulation));
+
+  var labels = node
+    .append("text")
+    .text(nodeTitle)
+    .attr('x', 6)
+    .attr('y', 3);
 
   if (W) link.attr("stroke-width", ({index: i}: any): any => W[i]);
   if (L) link.attr("stroke", ({index: i}: any): any => L[i]);
@@ -107,8 +115,7 @@ export function ForceGraph(figure: any, {
       .attr("y2", d => d.target.y);
 
     node
-      .attr("cx", d => d.x)
-      .attr("cy", d => d.y);
+      .attr('transform', d => `translate(${d.x}, ${d.y})`);
   }
 
   function drag(simulation: Simulation<any, any>): any {
