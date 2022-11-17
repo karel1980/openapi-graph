@@ -1,5 +1,7 @@
 <h2>Openapi Graph</h2>
 
-<div>{{title}}</div>
+<textarea [(ngModel)]="openapiSpec"></textarea>
 
-<figure id="figure"></figure>
+<button (click)="updateGraph()">Update graph</button>
+
+<figure id="figure"><svg></svg></figure>

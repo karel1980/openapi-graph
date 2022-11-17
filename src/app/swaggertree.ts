@@ -36,7 +36,7 @@ export const swaggertree = (yaml: string, idGenerator = uuid): SwaggerNode => {
 
   var result = newSwaggerNode('/', idGenerator);
 
-  for (const [path, pathInfo] of Object.entries(spec.paths)) {
+  for (const [path, pathInfo] of Object.entries(spec.paths || [])) {
     var pathSegments = path.split('/')
     ensureNodes(result, pathSegments, Object.keys(pathInfo as any), idGenerator);
   }
@@ -54,14 +54,13 @@ export const buildGraph = (swaggertree: SwaggerNode): any => {
 
 export const buildGraphRecursive = (node: SwaggerNode, nodes: any[], links: any[]): any => {
   // node + methods
-  nodes.push(node);
-  nodes.splice(nodes.length, 0, node.methods.map(method => ({id: method + '-' + node.id})));
+  nodes.push({id: node.id, text: node.pathSegment, type: 'path'});
+  var methodNodes = node.methods.map(method => ({id: method + '-' + node.id, text: method, type: 'method'}));
+  nodes.push(...methodNodes);
 
-  // links from node to methods
-  links.splice(links.length, 0, node.methods.map(method => method + '-' + node.id));
-
-  // links from node to children
-  links.splice(links.length, 0, node.children.map(child => ({source: node.id, target: child.id, type: 'path'})));
+  // links from node to method nodes
+  links.push(...node.methods.map(method => ({source: node.id, target: `${method}-${node.id}`, type: 'method'})));
+  links.push(...node.children.map(child => ({source: node.id, target: child.id, type: 'path'})));
 
   // recursively add children
   for (let child of node.children) {

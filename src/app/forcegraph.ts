@@ -63,6 +63,7 @@ export function ForceGraph(figure: any, {
     .force("center", d3.forceCenter())
     .on("tick", ticked);
 
+  d3.selectAll(figure).selectAll("svg").remove();
   const svg = d3.selectAll(figure).append("svg")
     .attr("width", width)
     .attr("height", height)
@@ -93,14 +94,16 @@ export function ForceGraph(figure: any, {
 
   var labels = node
     .append("text")
-    .text(nodeTitle)
     .attr('x', 6)
     .attr('y', 3);
 
   if (W) link.attr("stroke-width", ({index: i}: any): any => W[i]);
   if (L) link.attr("stroke", ({index: i}: any): any => L[i]);
   if (G) node.attr("fill", ({index: i}: any): any => (color as any)(G[i]));
-  if (T) node.append("title").text(({index: i}: any): any => T[i]);
+  if (T) {
+    node.append("title").text(({index: i}: any): any => T[i]);
+    labels.text(({index: i}: any): any => T[i]);
+  }
   if (invalidation != null) invalidation.then(() => simulation.stop());
 
   function intern(value: any) {
@@ -142,5 +145,5 @@ export function ForceGraph(figure: any, {
       .on("end", dragended);
   }
 
-  return Object.assign(svg.node() as unknown as any, {scales: {color}});
+  return Object.assign(svg.node() as unknown as any, {scales: {color}, link, node});
 }
