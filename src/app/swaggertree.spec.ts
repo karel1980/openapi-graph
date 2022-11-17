@@ -1,9 +1,10 @@
-import * as fs from 'fs';
 import {swaggertree} from "./swaggertree";
+import {v4 as uuid} from "uuid";
 
 describe('swaggertree', () => {
-  it('should load yaml', () => {
-    var spec = `openapi: 3.0.0
+  describe('swaggertree', () => {
+    it('should load yaml', () => {
+      var spec = `openapi: 3.0.0
 info:
   title: Sample API
   description: Optional multiline or single-line description in [CommonMark](http://commonmark.org/help/) or HTML.
@@ -28,8 +29,9 @@ paths:
                 items:
                   type: string`
 
-    var actual = swaggertree(spec);
+      var actual = swaggertree(spec, (() => 'test') as typeof uuid);
 
-    expect(actual).toEqual({ 'pathSegment': '/', methods: [], children: [ { pathSegment: 'users', methods: ['get'], children: [] } ]});
+      expect(actual).toEqual({id: 'test', 'pathSegment': '/', methods: [], children: [{id: 'test', pathSegment: 'users', methods: ['get'], children: []}]});
+    });
   });
 })
